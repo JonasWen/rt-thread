@@ -628,6 +628,7 @@ static void _crypto_reset(struct rt_hwcrypto_ctx *ctx)
     }
 }
 
+#if defined(SOC_SERIES_STM32MP1)
 void HASH2_DMA_IN_IRQHandler(void)
 {
     extern DMA_HandleTypeDef hdma_hash_in;
@@ -666,6 +667,7 @@ void CRYP2_DMA_OUT_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#endif
 
 static const struct rt_hwcrypto_ops _ops =
 {
