@@ -1,0 +1,25 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+msp/tkm32_msp.c
+''')
+
+path = [cwd]
+path += [cwd + '/msp']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/tkm32f4xx_stdperiph_lib/CMSIS/Device/TKM/TKM32F499/Source/mdk/startup_tkm32f499.s']
+
+CPPDEFINES = ['TKM32F499GT8']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

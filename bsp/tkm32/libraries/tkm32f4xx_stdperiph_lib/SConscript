@@ -1,0 +1,51 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+CMSIS/Device/TKM/TKM32F499/Source/system_tkm32f499.c
+tkm32f499_stdperiph_driver/src/tkm32f499_dma.c
+tkm32f499_stdperiph_driver/src/tkm32f499_exti.c
+tkm32f499_stdperiph_driver/src/tkm32f499_misc.c
+tkm32f499_stdperiph_driver/src/tkm32f499_pwr.c
+tkm32f499_stdperiph_driver/src/tkm32f499_rcc.c
+tkm32f499_stdperiph_driver/src/tkm32f499_syscfg.c
+""")
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_gpio.c']
+    
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_uart.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_i2c.c']
+    
+if GetDepend(['RT_USING_SPI']):
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_spi.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_can.c']
+
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_tim.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_iwdg.c']
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_wwdg.c']
+if GetDepend(['RT_USING_QSPI']):
+    src += ['tkm32f499_stdperiph_driver/src/tkm32f499_qspi.c']
+
+
+path = [cwd + '/CMSIS/Device/TKM/TKM32F499/Include', 
+    cwd + '/tkm32f499_stdperiph_driver/inc',
+    cwd + '/CMSIS/Include']
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
